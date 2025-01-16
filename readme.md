@@ -79,6 +79,8 @@ Utilize o Postman ou outra ferramenta para enviar requisições HTTP aos endpoin
 }
 ```
 
+Uma **collection do Postman** está disponível na raiz do projeto para facilitar os testes dos endpoints. Importe a collection no Postman e ajuste as variáveis de ambiente conforme necessário para testar as funções rapidamente.
+
 ### 5. Publicação no Azure
 
 A publicação no Azure será realizada automaticamente por meio de um pipeline CI/CD configurado com GitHub Workflows. O arquivo de configuração do pipeline está localizado no seguinte caminho dentro do repositório:
@@ -88,7 +90,6 @@ A publicação no Azure será realizada automaticamente por meio de um pipeline 
 ```
 
 Para mais informações sobre a configuração de Workflows no GitHub, consulte a [documentação oficial](https://docs.github.com/actions).
-
 
 ## Observações Importantes
 
