@@ -72,9 +72,10 @@ Utilize o Postman ou outra ferramenta para enviar requisições HTTP aos endpoin
 
 ```json
 {
-  "title": "Nova tarefa",
-  "description": "Detalhes da tarefa",
-  "dueDate": "2025-01-15"
+  "name": "Estudar cloud azure",
+  "description": "Aprender a configurar functions",
+  "priority": "High",
+  "status": "PENDING"
 }
 ```
 
