@@ -38,6 +38,9 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
+    - name: Grant execution permissions for Maven Wrapper
+      run: chmod +x ./mvnw
+
     - name: Install dependencies
       run: ./mvnw clean install
 
@@ -62,18 +65,4 @@ jobs:
       uses: azure/functions-action@v1
       with:
         app-name: <nome-do-seu-app-azure-function-dev>
-        package: './target/${{ github.event.repository.name }}.jar'
-
-    - name: Deploy to Azure Functions (HML)
-      if: startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/hotfix/')
-      uses: azure/functions-action@v1
-      with:
-        app-name: <nome-do-seu-app-azure-function-hml>
-        package: './target/${{ github.event.repository.name }}.jar'
-
-    - name: Deploy to Azure Functions (PRD)
-      if: github.ref == 'refs/heads/main'
-      uses: azure/functions-action@v1
-      with:
-        app-name: <nome-do-seu-app-azure-function-prd>
         package: './target/${{ github.event.repository.name }}.jar'
