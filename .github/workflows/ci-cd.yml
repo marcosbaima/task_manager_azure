@@ -1,0 +1,78 @@
+name: CI/CD Pipeline for Azure Functions
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - 'release/*'
+      - 'feature/*'
+      - 'hotfix/*'
+      - 'bugfix/*'
+  pull_request:
+    branches:
+      - develop
+      - 'release/*'
+      - 'hotfix/*'
+      - 'bugfix/*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Cache Maven dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v2
+      with:
+        java-version: '17'
+
+    - name: Install dependencies
+      run: ./mvnw clean install
+
+    - name: Build
+      run: ./mvnw package
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Deploy to Azure Functions (Dev)
+      if: startsWith(github.ref, 'refs/heads/develop')
+      uses: azure/functions-action@v1
+      with:
+        app-name: <nome-do-seu-app-azure-function-dev>
+        package: './target/${{ github.event.repository.name }}.jar'
+
+    - name: Deploy to Azure Functions (HML)
+      if: startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/hotfix/')
+      uses: azure/functions-action@v1
+      with:
+        app-name: <nome-do-seu-app-azure-function-hml>
+        package: './target/${{ github.event.repository.name }}.jar'
+
+    - name: Deploy to Azure Functions (PRD)
+      if: github.ref == 'refs/heads/main'
+      uses: azure/functions-action@v1
+      with:
+        app-name: <nome-do-seu-app-azure-function-prd>
+        package: './target/${{ github.event.repository.name }}.jar'
